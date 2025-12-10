@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI分享：链接和资料 - 演示文档</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: #f5f7fa;
+            color: #1a1a1a;
+            line-height: 1.8;
+        }
+
+        /* 顶部标题 */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* 章节样式 */
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 0;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid #667eea;
+            overflow: hidden;
+        }
+
+        /* 章节标题（可点击折叠） */
+        .section-header {
+            padding: 30px 50px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            user-select: none;
+            position: relative;
+            background-color: white;
+        }
+
+        .section-header::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .section-header:hover {
+            background-color: #f0f4ff;
+            padding-left: 55px;
+        }
+
+        .section-header:hover::before {
+            width: 5px;
+        }
+
+        .section-header.active {
+            background-color: #e8edff;
+            padding-left: 55px;
+        }
+
+        .section-header.active::before {
+            width: 5px;
+        }
+
+        .section-header.active:hover {
+            background-color: #dde7ff;
+        }
+
+        .section-header:active {
+            background-color: #d0dcff;
+            transform: scale(0.998);
+        }
+
+        .section h2 {
+            font-size: 32px;
+            color: #667eea;
+            margin: 0;
+            font-weight: 700;
+            flex: 1;
+        }
+
+        /* 折叠图标 */
+        .collapse-icon {
+            font-size: 24px;
+            color: #667eea;
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
+
+        .section.collapsed .collapse-icon {
+            transform: rotate(-90deg);
+        }
+
+        /* 章节内容 */
+        .section-content {
+            padding: 0 50px 50px 50px;
+            max-height: 10000px;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease, opacity 0.3s ease;
+            opacity: 1;
+        }
+
+        .section.collapsed .section-content {
+            max-height: 0;
+            padding: 0 50px;
+            opacity: 0;
+        }
+
+        .section h3 {
+            font-size: 24px;
+            color: #333;
+            margin: 30px 0 20px 0;
+            font-weight: 600;
+        }
+
+        .section h4 {
+            font-size: 20px;
+            color: #444;
+            margin: 25px 0 15px 0;
+            font-weight: 600;
+        }
+
+        /* 文本内容 */
+        .text-content {
+            color: #2c3e50;
+            font-size: 16px;
+            line-height: 1.8;
+            margin: 15px 0;
+        }
+
+        /* 列表样式 */
+        .section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .section li {
+            padding: 18px 20px;
+            margin: 12px 0;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            color: #2c3e50;
+            font-size: 16px;
+            line-height: 1.8;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        .section li:hover {
+            background: #e8f0ff;
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+            border-left-width: 5px;
+        }
+
+        /* 步骤列表 */
+        .step-list {
+            counter-reset: step-counter;
+        }
+
+        .step-list li {
+            counter-increment: step-counter;
+            position: relative;
+            padding-left: 70px;
+        }
+
+        .step-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 20px;
+            top: 18px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        /* 代码块样式 */
+        .code-wrapper {
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .code-block {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 25px;
+            border-radius: 12px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            position: relative;
+        }
+
+        .code-block code {
+            color: #abb2bf;
+            white-space: pre;
+        }
+
+        /* 链接显示 */
+        .link-display {
+            display: inline-block;
+            padding: 12px 18px;
+            background: #e8f0fe;
+            color: #1976d2;
+            border-radius: 8px;
+            margin: 8px 5px 8px 0;
+            text-decoration: none;
+            font-size: 15px;
+            border: 1px solid #bbdefb;
+            transition: all 0.3s ease;
+            word-break: break-all;
+        }
+
+        .link-display:hover {
+            background: #1976d2;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+        }
+
+        /* 复制按钮 */
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            vertical-align: middle;
+        }
+
+        .copy-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+
+        .copy-btn.copied {
+            background: #4caf50;
+        }
+
+        /* 文本块包装器 */
+        .text-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .text-block {
+            background: #f8f9fa;
+            padding: 18px 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            color: #2c3e50;
+            font-size: 16px;
+            line-height: 1.8;
+            margin: 10px 0;
+            word-break: break-word;
+        }
+
+        /* 链接项 */
+        .link-item {
+            margin: 15px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #1976d2;
+            color: #2c3e50;
+            font-size: 16px;
+            line-height: 1.8;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        .link-item:hover {
+            background: #e3f2fd;
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.15);
+            border-left-width: 5px;
+        }
+
+        .link-item strong {
+            color: #333;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header {
+                padding: 40px 20px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .container {
+                padding: 20px 10px;
+            }
+
+            .section-header {
+                padding: 20px;
+            }
+
+            .section-content {
+                padding: 0 20px 30px 20px;
+            }
+
+            .section.collapsed .section-content {
+                padding: 0 20px;
+            }
+
+            .section h2 {
+                font-size: 24px;
+            }
+
+            .copy-btn {
+                display: block;
+                margin: 10px 0 0 0;
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* 成功提示 */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4caf50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+            display: none;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部标题 -->
+    <div class="header">
+        <h1>📚 AI分享：链接和资料</h1>
+        <p>演示文档 - 所有内容均可一键复制</p>
+    </div>
+
+    <!-- 主容器 -->
+    <div class="container">
+        <!-- 1. Prompt 部分 -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>1. Prompt</h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-content">
+            <h3>给通义千问的文案：</h3>
+            <div class="text-wrapper">
+                <div class="text-block" id="text-tongyi">
+                    你是一位专注于文档类产品的资深产品经理，擅长将用户需求高效转化为结构清晰、逻辑严谨、内容完整的产品设计文档。用户稍后会给你要求，你需要依据要求输出一份可直接用于产品设计文档，目前阶段暂不涉及技术方案。这份文档一定返回的是纯粹的markdown格式，方便我一键复制。
+                </div>
+                <button class="copy-btn" onclick="copyText('text-tongyi')">📋 复制</button>
+            </div>
+
+            <h3>给cursor的文案：</h3>
+            <div class="text-wrapper">
+                <div class="text-block" id="text-cursor">
+                    …………请帮我创建一个本地任务管理系统………，要求只使用原生 JavaScript、HTML 和 CSS，不使用任何框架（如 React、Vue 等）或模块系统（如 ES6 import/export），确保代码可直接在浏览器中运行。
+                </div>
+                <button class="copy-btn" onclick="copyText('text-cursor')">📋 复制</button>
+            </div>
+            </div>
+        </div>
+
+        <!-- 2. Cursor 部分 -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>2. Cursor</h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-content">
+            <ul class="step-list">
+                <li><strong>Step1：</strong>新建文件</li>
+                <li><strong>Step2：</strong>导入设计文档的md格式</li>
+                <li><strong>Step3：</strong>丢给cursor阅读生成demo</li>
+                <li><strong>Step4：</strong>得到html或项目文件包</li>
+                <li><strong>完成：</strong>基本完成啦！</li>
+            </ul>
+            </div>
+        </div>
+
+        <!-- 3. 如何更像 部分 -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>3. 如何更像</h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-content">
+            <ul>
+                <li>
+                    <strong>明确尺寸：</strong>F12选择元素看参考效果
+                </li>
+                <li>
+                    <strong>明确颜色：</strong>潘通色卡查询
+                    <br><br>
+                    <a href="https://www.colortell.com/colorbook/?callbook=a" target="_blank" class="link-display" id="link-colortell">
+                        https://www.colortell.com/colorbook/?callbook=a
+                    </a>
+                    <button class="copy-btn" onclick="copyLink('link-colortell')">📋 复制链接</button>
+                </li>
+                <li>
+                    <strong>明确icon：</strong>阿里巴巴矢量图标库
+                    <br><br>
+                    <a href="https://www.iconfont.cn/?spm=a313x.search_index.i3.d4d0a486a.437a3a81yUocP6" target="_blank" class="link-display" id="link-iconfont">
+                        https://www.iconfont.cn/?spm=a313x.search_index.i3.d4d0a486a.437a3a81yUocP6
+                    </a>
+                    <button class="copy-btn" onclick="copyLink('link-iconfont')">📋 复制链接</button>
+                </li>
+            </ul>
+            </div>
+        </div>
+
+        <!-- 4. 如何更强 部分 -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>4. 如何更强</h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-content">
+            <h3>4.1. MCP</h3>
+            
+            <h4>1. MCP有什么用？</h4>
+            <ul>
+                <li><strong>sequential-thinking：</strong>帮 AI 像人一样一步步思考，拆解复杂问题、规划做事步骤</li>
+                <li><strong>playwright：</strong>模拟人操作浏览器，能打开网页、点按钮、填表单、截图、爬取网页内容等</li>
+                <li><strong>Context7：</strong>调用专用能力，比如查特定数据、对接第三方功能</li>
+                <li><strong>Figma：</strong>直接操作 Figma 设计文件</li>
+                <li><strong>browser-tools：</strong>浏览器操作工具，能浏览网页、自动提取报错内容等</li>
+            </ul>
+
+            <h4>2. 如何安装？</h4>
+            <ul class="step-list">
+                <li><strong>Step1：</strong>安装node.js</li>
+                <li><strong>Step2：</strong>添加代码</li>
+                <li><strong>Step3：</strong>谷歌添加下browser的扩展</li>
+            </ul>
+
+            <h4>以下是代码：</h4>
+            <div class="code-wrapper">
+                <div class="code-block" id="code-mcp">
+<code>{
+  "mcpServers": {
+    "sequential-thinking": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp"
+      ]
+    },
+    "Context7": {
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {}
+    },
+    "Figma": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "figma-developer-mcp",
+        "--figma-api-key=figd_4SaiN9SdFVXLP4zbLNrq9tpZmzZ48ZwSMs-kB62T",
+        "--stdio"
+      ]
+    },
+    "browser-tools": {
+      "command": "npx",
+      "args": ["@agentdeskai/browser-tools-mcp@1.2.1"]
+    }
+  }
+}</code>
+                </div>
+                <button class="copy-btn" onclick="copyCode('code-mcp')" style="margin-top: 10px;">📋 复制代码</button>
+            </div>
+            </div>
+        </div>
+
+        <!-- 5. 连接API 部分 -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>5. 连接API</h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="link-item">
+                    <strong>硅基流动统一登录：</strong>
+                    <a href="https://cloud.siliconflow.cn/me/fine-tune" target="_blank" class="link-display" id="link-siliconflow">
+                        https://cloud.siliconflow.cn/me/fine-tune
+                    </a>
+                    <button class="copy-btn" onclick="copyLink('link-siliconflow')">📋 复制链接</button>
+                </div>
+                <div class="link-item">
+                    <strong>大模型服务平台百炼控制台：</strong>
+                    <a href="https://bailian.console.aliyun.com/?spm=5176.29619931.J_SEsSjsNv72yRuRFS2VknO.2.1e7c10d7TauPro&tab=demohouse#/api-key" target="_blank" class="link-display" id="link-bailian">
+                        https://bailian.console.aliyun.com/?spm=5176.29619931.J_SEsSjsNv72yRuRFS2VknO.2.1e7c10d7TauPro&tab=demohouse#/api-key
+                    </a>
+                    <button class="copy-btn" onclick="copyLink('link-bailian')">📋 复制链接</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. 如何分享 部分 -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>6. 如何分享出去</h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="link-item">
+                    <strong>方式一：</strong>直接打包文件发送出去
+                </div>
+                <div class="link-item">
+                    <strong>方式二：</strong>将文件推到GitHub上面，然后让Netlify进行部署，直接会自动生成链接
+                    <br><br>
+                    <a href="https://app.netlify.com/" target="_blank" class="link-display" id="link-netlify">
+                        https://app.netlify.com/
+                    </a>
+                    <button class="copy-btn" onclick="copyLink('link-netlify')">📋 复制链接</button>
+                </div>
+                <div class="link-item">
+                    <strong>示例：</strong>
+                    <a href="https://banxie.netlify.app/" target="_blank" class="link-display" id="link-example">
+                        https://banxie.netlify.app/
+                    </a>
+                    <button class="copy-btn" onclick="copyLink('link-example')">📋 复制链接</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 成功提示 -->
+    <div class="toast" id="toast">✅ 已复制到剪贴板！</div>
+
+    <script>
+        // 折叠/展开章节
+        function toggleSection(header) {
+            const section = header.parentElement;
+            const isCollapsed = section.classList.contains('collapsed');
+            
+            // 移除所有其他章节的选中态
+            document.querySelectorAll('.section-header').forEach(h => {
+                if (h !== header) {
+                    h.classList.remove('active');
+                }
+            });
+            
+            // 切换当前章节的折叠状态
+            section.classList.toggle('collapsed');
+            
+            // 如果展开状态，添加选中态；如果折叠状态，移除选中态
+            if (!section.classList.contains('collapsed')) {
+                header.classList.add('active');
+            } else {
+                header.classList.remove('active');
+            }
+        }
+        
+        // 页面加载时，默认展开的第一个章节添加选中态
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstHeader = document.querySelector('.section-header');
+            if (firstHeader && !firstHeader.parentElement.classList.contains('collapsed')) {
+                firstHeader.classList.add('active');
+            }
+        });
+
+        // 复制文本内容
+        function copyText(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent || element.innerText;
+            copyToClipboard(text, elementId);
+        }
+
+        // 复制代码
+        function copyCode(elementId) {
+            const element = document.getElementById(elementId);
+            const codeElement = element.querySelector('code');
+            const text = codeElement.textContent || codeElement.innerText;
+            copyToClipboard(text, elementId);
+        }
+
+        // 复制链接
+        function copyLink(elementId) {
+            const element = document.getElementById(elementId);
+            const link = element.href || element.textContent.trim();
+            copyToClipboard(link, elementId);
+        }
+
+        // 复制到剪贴板
+        function copyToClipboard(text, elementId) {
+            // 使用现代 Clipboard API
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast();
+                    highlightButton(elementId);
+                }).catch(err => {
+                    console.error('复制失败:', err);
+                    fallbackCopy(text, elementId);
+                });
+            } else {
+                // 降级方案
+                fallbackCopy(text, elementId);
+            }
+        }
+
+        // 降级复制方案
+        function fallbackCopy(text, elementId) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showToast();
+                    highlightButton(elementId);
+                } else {
+                    alert('复制失败，请手动选择文本复制');
+                }
+            } catch (err) {
+                console.error('复制失败:', err);
+                alert('复制失败，请手动选择文本复制');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        // 显示成功提示
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // 高亮按钮
+        function highlightButton(elementId) {
+            // 找到对应的复制按钮
+            const buttons = document.querySelectorAll('.copy-btn');
+            buttons.forEach(btn => {
+                if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(elementId)) {
+                    btn.classList.add('copied');
+                    btn.textContent = '✅ 已复制';
+                    setTimeout(() => {
+                        btn.classList.remove('copied');
+                        btn.textContent = btn.textContent.includes('代码') ? '📋 复制代码' : 
+                                        btn.textContent.includes('链接') ? '📋 复制链接' : '📋 复制';
+                    }, 2000);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
